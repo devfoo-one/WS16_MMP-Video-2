@@ -1,6 +1,6 @@
 //HTML5 Example: Chroma Key Filter
 //(c) 2011-13
-// J�rgen Lohr, lohr@beuth-hochschule.de
+// Jürgen Lohr, lohr@beuth-hochschule.de
 // Oliver Lietz, lietz@nanocosmos.de
 //v1.4, May.2013
 
@@ -9,7 +9,7 @@ var isChrome = /Chrome/.test(navigator.userAgent);
 
 var processor = {
 
-    // returns an [r,g,b] array for a given coordinate out of a frame
+    // Returns an [r,g,b] array for a given coordinate out of a frame
     // if x or y is outside the image, it returns [0,0,0]
     getPixelRGB: function(frame, x, y) {
         if (x < 0 || x > frame.width || y < 0 || y > frame.height) {
@@ -19,7 +19,17 @@ var processor = {
         var r = frame.data[i * 4 + 0];
         var g = frame.data[i * 4 + 1];
         var b = frame.data[i * 4 + 2];
-        return [r,g,b]
+        return [r,g,b];
+    },
+
+    // applies weights to values and returns a sum scalar
+    // values = [2,5,7], weights = [1,2,0] => 12
+    applyFilter: function(values, weights) {
+        sum = 0;
+        for (var i = 0; i < values.length; i++) {
+            sum += values[i] * weights[i];
+        }
+        return sum;
     },
 
     // computeFrame
@@ -57,11 +67,68 @@ var processor = {
         //
         for (var i = 0; i < length; i++) {
             x = i % frame.width;
-            y = Math.floor(i / frame.width)
+            y = Math.floor(i / frame.width);
+            r_1 = this.getPixelRGB(frame, x - 1, y - 1)[0];
+            r_2 = this.getPixelRGB(frame, x    , y - 1)[0];
+            r_3 = this.getPixelRGB(frame, x + 1, y - 1)[0];
+            r_4 = this.getPixelRGB(frame, x - 1, y    )[0];
+            r_i = this.getPixelRGB(frame, x    , y    )[0];
+            r_6 = this.getPixelRGB(frame, x + 1, y    )[0];
+            r_7 = this.getPixelRGB(frame, x - 1, y + 1)[0];
+            r_8 = this.getPixelRGB(frame, x    , y + 1)[0];
+            r_9 = this.getPixelRGB(frame, x + 1, y + 1)[0];
+            g_1 = this.getPixelRGB(frame, x - 1, y - 1)[1];
+            g_2 = this.getPixelRGB(frame, x    , y - 1)[1];
+            g_3 = this.getPixelRGB(frame, x + 1, y - 1)[1];
+            g_4 = this.getPixelRGB(frame, x - 1, y    )[1];
+            g_i = this.getPixelRGB(frame, x    , y    )[1];
+            g_6 = this.getPixelRGB(frame, x + 1, y    )[1];
+            g_7 = this.getPixelRGB(frame, x - 1, y + 1)[1];
+            g_8 = this.getPixelRGB(frame, x    , y + 1)[1];
+            g_9 = this.getPixelRGB(frame, x + 1, y + 1)[1];
+            b_1 = this.getPixelRGB(frame, x - 1, y - 1)[2];
+            b_2 = this.getPixelRGB(frame, x    , y - 1)[2];
+            b_3 = this.getPixelRGB(frame, x + 1, y - 1)[2];
+            b_4 = this.getPixelRGB(frame, x - 1, y    )[2];
+            b_i = this.getPixelRGB(frame, x    , y    )[2];
+            b_6 = this.getPixelRGB(frame, x + 1, y    )[2];
+            b_7 = this.getPixelRGB(frame, x - 1, y + 1)[2];
+            b_8 = this.getPixelRGB(frame, x    , y + 1)[2];
+            b_9 = this.getPixelRGB(frame, x + 1, y + 1)[2];
 
-            frame_blur.data[i*4+0] = this.getPixelRGB(frame, x, y)[0];
-            frame_blur.data[i*4+1] = this.getPixelRGB(frame, x, y)[1];
-            frame_blur.data[i*4+2] = this.getPixelRGB(frame, x, y)[2];
+            red_matrix = [
+                r_1, r_2, r_3,
+                r_4, r_i, r_6,
+                r_7, r_8, r_9
+            ];
+            green_matrix = [
+                g_1, g_2, g_3,
+                g_4, g_i, g_6,
+                g_7, g_8, g_9
+            ];
+            blue_matrix = [
+                b_1, b_2, b_3,
+                b_4, b_i, b_6,
+                b_7, b_8, b_9
+            ];
+            median_filter = [
+                1/9, 1/9, 1/9,
+                1/9, 1/9, 1/9,
+                1/9, 1/9, 1/9
+            ];
+
+            gauss_filter = [  // http://dev.theomader.com/gaussian-kernel-calculator/
+                0.077847,	0.123317,	0.077847,
+                0.123317,	0.195346,	0.123317,
+                0.077847,	0.123317,	0.077847,
+            ];
+
+            frame_blur.data[i*4+0] = this.applyFilter(red_matrix, median_filter);
+            frame_blur.data[i*4+1] = this.applyFilter(green_matrix, median_filter);
+            frame_blur.data[i*4+2] = this.applyFilter(blue_matrix, median_filter);
+            frame_gauss.data[i*4+0] = this.applyFilter(red_matrix, gauss_filter);
+            frame_gauss.data[i*4+1] = this.applyFilter(green_matrix, gauss_filter);
+            frame_gauss.data[i*4+2] = this.applyFilter(blue_matrix, gauss_filter);
 
         }
         // write back to 3 canvas objects
