@@ -1,6 +1,6 @@
-//HTML5 Example: Chroma Key Filter 
-//(c) 2011-13 
-// Jürgen Lohr, lohr@beuth-hochschule.de
+//HTML5 Example: Chroma Key Filter
+//(c) 2011-13
+// Jï¿½rgen Lohr, lohr@beuth-hochschule.de
 // Oliver Lietz, lietz@nanocosmos.de
 //v1.4, May.2013
 
@@ -8,6 +8,19 @@ var isFirefox = /Firefox/.test(navigator.userAgent);
 var isChrome = /Chrome/.test(navigator.userAgent);
 
 var processor = {
+
+    // returns an [r,g,b] array for a given coordinate out of a frame
+    // if x or y is outside the image, it returns [0,0,0]
+    getPixelRGB: function(frame, x, y) {
+        if (x < 0 || x > frame.width || y < 0 || y > frame.height) {
+            return [0,0,0];
+        }
+        i = y * frame.width + x;
+        var r = frame.data[i * 4 + 0];
+        var g = frame.data[i * 4 + 1];
+        var b = frame.data[i * 4 + 2];
+        return [r,g,b]
+    },
 
     // computeFrame
     // do the image processing for one frame
@@ -21,38 +34,40 @@ var processor = {
         // draw current video frame to ctx
         ctx.drawImage(this.video, 0, 0, this.width - 1, this.height);
 
-        // get frame RGB data bytes from context ctx 
+        // get frame RGB data bytes from context ctx
         var frame = {};
         var length = 0;
         try {
             frame = ctx.getImageData(0, 0, this.width, this.height);
+            frame_blur = ctx.getImageData(0, 0, this.width, this.height);
+            frame_gauss = ctx.getImageData(0, 0, this.width, this.height);
+            frame_prewitt = ctx.getImageData(0, 0, this.width, this.height);
             length = (frame.data.length) / 4;
         } catch (e) {
             // catch and display error of getImageData fails
             this.browserError(e);
         }
 
-
-        // do the color key:
         // do the image processing
         // read in pixel data to r,g,b, key, write back
+        // the current pixel is x_i
+        // x_1 x_2 x_3
+        // x_4 x_i x_6
+        // x_7 x_8 x_9
+        //
         for (var i = 0; i < length; i++) {
-            var r = frame.data[i * 4 + 0];
-            var g = frame.data[i * 4 + 1];
-            var b = frame.data[i * 4 + 2];
+            x = i % frame.width;
+            y = Math.floor(i / frame.width)
 
-			// do the chroma key:
+            frame_blur.data[i*4+0] = this.getPixelRGB(frame, x, y)[0];
+            frame_blur.data[i*4+1] = this.getPixelRGB(frame, x, y)[1];
+            frame_blur.data[i*4+2] = this.getPixelRGB(frame, x, y)[2];
 
-            // check for key color "green" 
-            if (g > 210 && r > 170 && b < 140) {
-				// set "alpha" value to (0)
-                frame.data[i * 4 + 3] = 0;
-            }
         }
         // write back to 3 canvas objects
-        this.ctx1.putImageData(frame, 0, 0);
-        this.ctx2.putImageData(frame, 0, 0);
-        this.ctx3.putImageData(frame, 0, 0);
+        this.ctx1.putImageData(frame_blur, 0, 0);
+        this.ctx2.putImageData(frame_gauss, 0, 0);
+        this.ctx3.putImageData(frame_prewitt, 0, 0);
         return;
     },
 
@@ -86,7 +101,7 @@ var processor = {
 
         try {
 
-            // get the html <video> and <canvas> elements 
+            // get the html <video> and <canvas> elements
             this.video = document.getElementById("video");
 
             this.c1 = document.getElementById("c1");
@@ -100,7 +115,7 @@ var processor = {
             // show video width and height to log
             this.log("Found video: size " + this.video.videoWidth + "x" + this.video.videoHeight);
 
-            // scale the video display 
+            // scale the video display
             this.video.width = this.video.videoWidth / 2;
             this.video.height = this.video.videoWidth / 2;
 
