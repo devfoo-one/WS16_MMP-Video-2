@@ -1,3 +1,5 @@
+// MMP Video Uebung 02 - Filter, basierend auf:
+
 //HTML5 Example: Chroma Key Filter
 //(c) 2011-13
 // Jürgen Lohr, lohr@beuth-hochschule.de
@@ -151,8 +153,6 @@ var processor = {
             frame_prewitt.data[i*4+0] = prewitt;
             frame_prewitt.data[i*4+1] = prewitt;
             frame_prewitt.data[i*4+2] = prewitt;
-
-
         }
         // write back to 3 canvas objects
         this.ctx1.putImageData(frame_blur, 0, 0);
