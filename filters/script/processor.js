@@ -66,61 +66,76 @@ var processor = {
         // x_7 x_8 x_9
         //
         for (var i = 0; i < length; i++) {
-            x = i % frame.width;
-            y = Math.floor(i / frame.width);
-            r_1 = this.getPixelRGB(frame, x - 1, y - 1)[0];
-            r_2 = this.getPixelRGB(frame, x    , y - 1)[0];
-            r_3 = this.getPixelRGB(frame, x + 1, y - 1)[0];
-            r_4 = this.getPixelRGB(frame, x - 1, y    )[0];
-            r_i = this.getPixelRGB(frame, x    , y    )[0];
-            r_6 = this.getPixelRGB(frame, x + 1, y    )[0];
-            r_7 = this.getPixelRGB(frame, x - 1, y + 1)[0];
-            r_8 = this.getPixelRGB(frame, x    , y + 1)[0];
-            r_9 = this.getPixelRGB(frame, x + 1, y + 1)[0];
-            g_1 = this.getPixelRGB(frame, x - 1, y - 1)[1];
-            g_2 = this.getPixelRGB(frame, x    , y - 1)[1];
-            g_3 = this.getPixelRGB(frame, x + 1, y - 1)[1];
-            g_4 = this.getPixelRGB(frame, x - 1, y    )[1];
-            g_i = this.getPixelRGB(frame, x    , y    )[1];
-            g_6 = this.getPixelRGB(frame, x + 1, y    )[1];
-            g_7 = this.getPixelRGB(frame, x - 1, y + 1)[1];
-            g_8 = this.getPixelRGB(frame, x    , y + 1)[1];
-            g_9 = this.getPixelRGB(frame, x + 1, y + 1)[1];
-            b_1 = this.getPixelRGB(frame, x - 1, y - 1)[2];
-            b_2 = this.getPixelRGB(frame, x    , y - 1)[2];
-            b_3 = this.getPixelRGB(frame, x + 1, y - 1)[2];
-            b_4 = this.getPixelRGB(frame, x - 1, y    )[2];
-            b_i = this.getPixelRGB(frame, x    , y    )[2];
-            b_6 = this.getPixelRGB(frame, x + 1, y    )[2];
-            b_7 = this.getPixelRGB(frame, x - 1, y + 1)[2];
-            b_8 = this.getPixelRGB(frame, x    , y + 1)[2];
-            b_9 = this.getPixelRGB(frame, x + 1, y + 1)[2];
+            var x = i % frame.width;
+            var y = Math.floor(i / frame.width);
+            var r_1 = this.getPixelRGB(frame, x - 1, y - 1)[0];
+            var r_2 = this.getPixelRGB(frame, x    , y - 1)[0];
+            var r_3 = this.getPixelRGB(frame, x + 1, y - 1)[0];
+            var r_4 = this.getPixelRGB(frame, x - 1, y    )[0];
+            var r_i = this.getPixelRGB(frame, x    , y    )[0];
+            var r_6 = this.getPixelRGB(frame, x + 1, y    )[0];
+            var r_7 = this.getPixelRGB(frame, x - 1, y + 1)[0];
+            var r_8 = this.getPixelRGB(frame, x    , y + 1)[0];
+            var r_9 = this.getPixelRGB(frame, x + 1, y + 1)[0];
+            var g_1 = this.getPixelRGB(frame, x - 1, y - 1)[1];
+            var g_2 = this.getPixelRGB(frame, x    , y - 1)[1];
+            var g_3 = this.getPixelRGB(frame, x + 1, y - 1)[1];
+            var g_4 = this.getPixelRGB(frame, x - 1, y    )[1];
+            var g_i = this.getPixelRGB(frame, x    , y    )[1];
+            var g_6 = this.getPixelRGB(frame, x + 1, y    )[1];
+            var g_7 = this.getPixelRGB(frame, x - 1, y + 1)[1];
+            var g_8 = this.getPixelRGB(frame, x    , y + 1)[1];
+            var g_9 = this.getPixelRGB(frame, x + 1, y + 1)[1];
+            var b_1 = this.getPixelRGB(frame, x - 1, y - 1)[2];
+            var b_2 = this.getPixelRGB(frame, x    , y - 1)[2];
+            var b_3 = this.getPixelRGB(frame, x + 1, y - 1)[2];
+            var b_4 = this.getPixelRGB(frame, x - 1, y    )[2];
+            var b_i = this.getPixelRGB(frame, x    , y    )[2];
+            var b_6 = this.getPixelRGB(frame, x + 1, y    )[2];
+            var b_7 = this.getPixelRGB(frame, x - 1, y + 1)[2];
+            var b_8 = this.getPixelRGB(frame, x    , y + 1)[2];
+            var b_9 = this.getPixelRGB(frame, x + 1, y + 1)[2];
 
-            red_matrix = [
+            var red_matrix = [
                 r_1, r_2, r_3,
                 r_4, r_i, r_6,
                 r_7, r_8, r_9
             ];
-            green_matrix = [
+            var green_matrix = [
                 g_1, g_2, g_3,
                 g_4, g_i, g_6,
                 g_7, g_8, g_9
             ];
-            blue_matrix = [
+            var blue_matrix = [
                 b_1, b_2, b_3,
                 b_4, b_i, b_6,
                 b_7, b_8, b_9
             ];
-            median_filter = [
+            var grayscale_matrix = [
+                0.3*r_1+0.59*g_1+0.11*b_1, 0.3*r_2+0.59*g_2+0.11*b_2, 0.3*r_3+0.59*g_3+0.11*b_3,
+                0.3*r_4+0.59*g_4+0.11*b_4, 0.3*r_i+0.59*g_i+0.11*b_i, 0.3*r_6+0.59*g_6+0.11*b_6,
+                0.3*r_7+0.59*g_7+0.11*b_7, 0.3*r_8+0.59*g_8+0.11*b_8, 0.3*r_9+0.59*g_9+0.11*b_9,
+            ];
+            var median_filter = [
                 1/9, 1/9, 1/9,
                 1/9, 1/9, 1/9,
                 1/9, 1/9, 1/9
             ];
-
-            gauss_filter = [  // http://dev.theomader.com/gaussian-kernel-calculator/
+            var gauss_filter = [  // http://dev.theomader.com/gaussian-kernel-calculator/
                 0.077847,	0.123317,	0.077847,
                 0.123317,	0.195346,	0.123317,
                 0.077847,	0.123317,	0.077847,
+            ];
+
+            var prewittX_filter = [  // https://de.wikipedia.org/wiki/Prewitt-Operator
+                -1, 0, 1,
+                -1, 0, 1,
+                -1, 0, 1
+            ];
+            var prewittY_filter = [
+                -1, -1, -1,
+                 0,  0,  0,
+                 1,  1,  1
             ];
 
             frame_blur.data[i*4+0] = this.applyFilter(red_matrix, median_filter);
@@ -129,6 +144,14 @@ var processor = {
             frame_gauss.data[i*4+0] = this.applyFilter(red_matrix, gauss_filter);
             frame_gauss.data[i*4+1] = this.applyFilter(green_matrix, gauss_filter);
             frame_gauss.data[i*4+2] = this.applyFilter(blue_matrix, gauss_filter);
+
+            var prewitt_X = this.applyFilter(grayscale_matrix, prewittX_filter);
+            var prewitt_Y = this.applyFilter(grayscale_matrix, prewittY_filter);
+            var prewitt = Math.sqrt(prewitt_X * prewitt_X + prewitt_Y * prewitt_Y);
+            frame_prewitt.data[i*4+0] = prewitt;
+            frame_prewitt.data[i*4+1] = prewitt;
+            frame_prewitt.data[i*4+2] = prewitt;
+
 
         }
         // write back to 3 canvas objects
