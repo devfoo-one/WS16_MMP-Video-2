@@ -47,7 +47,7 @@ applyFilter: function(values, weights) {
 
 ### Anwendung der Filter
 
-Alle, zur Anwendung eines 3x3 Faltungsfilter benötigten Farbwerte werden mit den genannten Helfermethoden ausgelesen und in ein Array zur Weiterverarbeitung überführt.
+Alle, zur Anwendung eines 3x3 Faltungsfilter, benötigten Farbwerte werden mit den genannten Helfermethoden ausgelesen und in ein Array zur Weiterverarbeitung überführt.
 
 ```javascript
 // ...
@@ -107,9 +107,9 @@ this.ctx2.putImageData(frame_gauss, 0, 0);
 
 #### Prewitt-Filter
 
-Der Prewitt-Filter besteht aus zwei separaten Filterkernen, einem für die X-, und einem für die Y-Achse.
+Der Prewitt-Filter besteht aus zwei separaten Filterkernen: Einen für die X-, und Einen für die Y-Achse.
 Die 3x3 Filterkerne wurden der [Wikipedia](https://de.wikipedia.org/wiki/Prewitt-Operator) entnommen.
-Im Gegensatz zu den anderen Filtern wird dieser auf einem Graustufenbild durchgeführt.
+Im Gegensatz zu den anderen Filtern wird dieser auf ein Graustufenbild angewendet.
 Die beiden Ergebnisse werden anschließend verrechnet und bilden das finale Bild.
 
 ```javascript
